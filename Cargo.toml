@@ -14,7 +14,7 @@ rkyv = { version = "0.7.42", features = ["validation"] }
 rand = "0.8"
 rand_chacha = "0.3"
 wit-bindgen = "0.57"
-jacktrip-rust = { path = "../SHAI/DEPOT-sovereign-scout/z-admin/time-suture/jacktrip-rust" }
+jacktrip-rust = { path = "crates/jacktrip-rust" }
 
 [target.wasm32-wasip2.dependencies]
 # WASI 0.2 specific dependencies if needed

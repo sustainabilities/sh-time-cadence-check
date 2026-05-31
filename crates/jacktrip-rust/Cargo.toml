@@ -1,0 +1,10 @@
+[package]
+name = "jacktrip-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.102"
+lock_api = { version = "0.4.14", features = ["nightly"] }
+ringbuf = "0.5.0"
+serde = { version = "1.0.228", features = ["derive"] }
