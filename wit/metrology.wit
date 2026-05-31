@@ -1,0 +1,51 @@
+package safeharbors:metrology;
+
+interface types {
+    record cadence-sample {
+        ign-ns-high: u64,
+        ign-ns-low: u64,
+        hw-ticks: u64,
+    }
+
+    record variance-report {
+        v25-avg-gap-ticks: f64,
+        nist-avg-gap-ticks: f64,
+        last-nist-avg-gap-ticks: option<f64>,
+        resonance-factor: f64,
+        spoofing-risk-score: f64,
+        confidence-interval: f64,
+        next-check-deadline-high: u64,
+        next-check-deadline-low: u64,
+        /// 90-day rearward projection of cadence (sampled daily)
+        rearward-projection: list<f64>,
+        /// 90-day forward projection of cadence (sampled daily)
+        forward-projection: list<f64>,
+    }
+}
+
+interface pulse {
+    /// Returns the absolute IGN pulse from the Time Refinery (sharded).
+    get-current-ign: func() -> tuple<u64, u64>;
+}
+
+interface cadence-monitor {
+    use types.{variance-report, cadence-sample};
+
+    /// [HARVEST]: Executes the surgical 30-second three-way cadence comparison.
+    analyze-comparison: func(
+        nist-current: list<cadence-sample>, 
+        nist-previous: option<list<cadence-sample>>,
+        v25-pulses: list<cadence-sample>
+    ) -> variance-report;
+
+    /// [DOCUMENT]: Generates a deterministic markdown write-up of the variance.
+    generate-readme: func(report: variance-report) -> string;
+
+    /// [SCHEDULE]: Uses TRNG to pick a surprise window before the deadline.
+    calculate-surprise-window: func(deadline-high: u64, deadline-low: u64, trng-seed: list<u8>) -> tuple<u64, u64>;
+}
+
+world time-cadence-check {
+    import pulse;
+    export cadence-monitor;
+}
